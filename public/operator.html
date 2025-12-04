@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>示唆出しシステム - オペレーター画面</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+<body class="bg-gray-100 text-gray-900">
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-slate-950 to-slate-900 px-6 h-20 flex items-center justify-between text-white">
+    <div class="text-lg font-semibold tracking-tight">示唆出しシステム</div>
+    <div class="flex items-center gap-4 text-sm">
+      <span class="text-slate-200">オペレーター：山田 太郎</span>
+      <button class="px-3 py-1 rounded-full border border-slate-400/70 text-xs hover:bg-white/10">
+        設定
+      </button>
+      <button class="px-3 py-1 rounded-full bg-white text-slate-900 text-xs font-semibold hover:bg-slate-100">
+        ログアウト
+      </button>
+    </div>
+  </header>
+
+  <div class="flex">
+    <!-- Sidebar -->
+    <aside class="w-60 bg-white shadow-md min-h-[calc(100vh-56px)] p-4 border-r border-gray-200">
+      <div class="text-xs text-gray-500 font-semibold mb-2 uppercase">メニュー</div>
+      <nav class="space-y-1 text-sm">
+        <a href="#" class="block px-3 py-2 rounded-md bg-blue-600 text-white font-medium">
+          オペレーター画面
+        </a>
+        <a href="./knowledge.html" class="block px-3 py-2 rounded-md hover:bg-gray-100">
+          ナレッジ管理
+        </a>
+        <a href="./dashboard.html" class="block px-3 py-2 rounded-md hover:bg-gray-100">
+          ダッシュボード
+        </a>
+      </nav>
+
+      <div class="mt-6">
+        <div class="text-xs text-gray-500 font-semibold mb-2 uppercase">最近のセッション</div>
+        <div class="space-y-2 text-sm">
+          <div class="border border-gray-200 rounded-md p-2 bg-gray-50">
+            <div class="font-medium">E21-2024-001</div>
+            <div class="text-xs text-green-600">通話中</div>
+          </div>
+          <div class="border border-gray-200 rounded-md p-2 bg-gray-50">
+            <div class="font-medium">E21-2024-002</div>
+            <div class="text-xs text-gray-500">終了</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="flex-1 p-6">
+      <!-- セッション情報 -->
+      <section class="mb-6">
+        <h1 class="text-2xl font-semibold mb-1">オペレーター画面</h1>
+        <p class="text-sm text-gray-600 mb-1">
+          通話中の発話ログをもとに、AI が追加質問・原因候補・回答文・ナレッジをリアルタイムに提示します。
+        </p>
+        <p class="text-sm text-gray-700">
+          セッションID：<span class="font-medium">FK-E21-2024-001</span> ／
+          ステータス：<span class="font-medium text-green-600">通話中</span>
+        </p>
+      </section>
+
+      <!-- 3カラム 2 / 5 / 5 -->
+      <section class="grid grid-cols-12 gap-6 mt-4 items-stretch">
+
+        <!-- 発話ログ (20%) -->
+        <div class="col-span-2">
+          <div class="bg-white border border-gray-300 rounded-xl p-4 h-full">
+            <h2 class="text-sm font-semibold mb-3">発話ログ</h2>
+            <div id="utterance-list" class="space-y-3 text-sm">
+              <!-- JS で段階的に追加 -->
+            </div>
+          </div>
+        </div>
+
+        <!-- AI示唆 (40%) -->
+        <div class="col-span-5 flex flex-col">
+          <div class="bg-white border border-gray-300 rounded-xl p-4 h-full flex-1 flex flex-col">
+            <!-- タイトル + モード + ボタン -->
+            <div class="flex items-center justify-between mb-5 gap-3">
+              <div class="flex items-center gap-3">
+                <h2 class="text-sm font-semibold">AI示唆</h2>
+
+                <!-- モードスイッチ -->
+                <div class="flex items-center text-xs border border-gray-300 rounded-full overflow-hidden">
+                  <button id="mode-auto"
+                          class="px-3 py-1 bg-slate-900 text-white"
+                          type="button">
+                    自動
+                  </button>
+                  <button id="mode-manual"
+                          class="px-3 py-1 bg-white text-gray-600"
+                          type="button">
+                    手動
+                  </button>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <button id="btn-fetch"
+                        class="px-3 py-1 text-xs rounded-full bg-blue-600 text-white disabled:opacity-40 disabled:cursor-not-allowed"
+                        type="button">
+                  示唆を取得
+                </button>
+                <button id="btn-pause"
+                        class="px-3 py-1 text-xs rounded-full bg-gray-200 text-gray-700 disabled:opacity-40 disabled:cursor-not-allowed"
+                        type="button">
+                  更新を停止
+                </button>
+              </div>
+            </div>
+
+            <!-- カード群 -->
+            <div class="space-y-3 text-sm flex-1">
+
+              <!-- 追加で確認すべき質問 -->
+              <div class="border border-gray-200 rounded-lg overflow-hidden p-0 h-56 flex flex-col">
+                <div class="sticky top-0 z-10 bg-gray-50 border-b border-gray-100 px-3 py-2 flex items-center gap-2">
+                  <div class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 text-lg">
+                    ?
+                  </div>
+                  <div class="flex-1">
+                    <p class="text-[11px] uppercase tracking-wide text-gray-400">Follow-up Questions</p>
+                    <p class="text-xs font-semibold text-gray-800">追加で確認すべき質問</p>
+                  </div>
+                  <span class="text-[10px] text-gray-400">📌 でピン留め</span>
+                </div>
+                <div id="followup-content" class="px-3 py-2 overflow-y-auto flex-1 text-gray-500 text-sm">
+                  AI示唆がまだ生成されていません。
+                </div>
+              </div>
+
+              <!-- 推定される原因候補 -->
+              <div class="border border-gray-200 rounded-lg overflow-hidden p-0 h-56 flex flex-col">
+                <div class="sticky top-0 z-10 bg-gray-50 border-b border-gray-100 px-3 py-2 flex items-center gap-2">
+                  <div class="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 text-lg">
+                    !
+                  </div>
+                  <div class="flex-1">
+                    <p class="text-[11px] uppercase tracking-wide text-gray-400">Possible Causes</p>
+                    <p class="text-xs font-semibold text-gray-800">推定される原因候補</p>
+                  </div>
+                  <span class="text-[10px] text-gray-400">📌 でピン留め</span>
+                </div>
+                <div id="causes-content" class="px-3 py-2 overflow-y-auto flex-1 text-gray-500 text-sm">
+                  AI示唆がまだ生成されていません。
+                </div>
+              </div>
+
+              <!-- 一次回答文（トーク例） -->
+              <div class="border border-gray-200 rounded-lg overflow-hidden p-0 h-56 flex flex-col">
+                <div class="sticky top-0 z-10 bg-gray-50 border-b border-gray-100 px-3 py-2 flex items-center gap-2">
+                  <div class="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 text-lg">
+                    💬
+                  </div>
+                  <div>
+                    <p class="text-[11px] uppercase tracking-wide text-gray-400">Script Example</p>
+                    <p class="text-xs font-semibold text-gray-800">一次回答文（トーク例）</p>
+                  </div>
+                </div>
+                <div id="script-content" class="px-3 py-2 overflow-y-auto flex-1 text-gray-500 text-sm">
+                  AI示唆がまだ生成されていません。
+                </div>
+              </div>
+
+              <!-- 引用元ナレッジ（候補） -->
+              <div class="border border-gray-200 rounded-lg overflow-hidden p-0 h-56 flex flex-col">
+                <div class="sticky top-0 z-10 bg-gray-50 border-b border-gray-100 px-3 py-2 flex items-center gap-2">
+                  <div class="w-8 h-8 rounded-full bg-sky-50 flex items-center justify-center text-sky-600 text-lg">
+                    📚
+                  </div>
+                  <div class="flex-1">
+                    <p class="text-[11px] uppercase tracking-wide text-gray-400">Knowledge Sources</p>
+                    <p class="text-xs font-semibold text-gray-800">引用元ナレッジ（候補）</p>
+                  </div>
+                  <span class="text-[10px] text-gray-400">📌 でピン留め</span>
+                </div>
+                <div id="sources-content" class="px-3 py-2 overflow-y-auto flex-1 text-gray-500 text-sm">
+                  AI示唆がまだ生成されていません。
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ナレッジ詳細 (40%) -->
+        <div class="col-span-5 flex flex-col">
+          <div class="bg-white border border-gray-300 rounded-xl p-4 h-full flex-1 flex flex-col">
+            <div class="flex items-center justify-between mb-3">
+              <div>
+                <h2 class="text-sm font-semibold">ナレッジ詳細</h2>
+                <p id="knowledge-subtitle" class="text-xs text-gray-600">
+                  引用元ナレッジを選択すると詳細が表示されます。
+                </p>
+              </div>
+              <button id="btn-open-tab"
+                      class="px-3 py-1 text-xs rounded-full bg-slate-900 text-white disabled:opacity-40 disabled:cursor-not-allowed"
+                      type="button"
+                      disabled>
+                別タブで開く
+              </button>
+            </div>
+
+            <div class="mt-0 text-sm leading-relaxed space-y-3 flex-1" id="knowledge-detail">
+
+              <!-- 概要 -->
+              <section class="border border-gray-200 rounded-lg overflow-hidden p-0 h-56 flex flex-col">
+                <div class="px-3 py-2 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
+                  <div class="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 text-lg">
+                    ℹ
+                  </div>
+                  <div>
+                    <p class="text-[11px] uppercase tracking-wide text-gray-400">Overview</p>
+                    <p class="text-xs font-semibold text-gray-800">概要</p>
+                  </div>
+                </div>
+                <div id="detail-overview" class="px-3 py-3 text-gray-500 overflow-y-auto flex-1">
+                  まだナレッジが選択されていません。
+                </div>
+              </section>
+
+              <!-- 症状と想定される原因 -->
+              <section class="border border-gray-200 rounded-lg overflow-hidden p-0 h-56 flex flex-col">
+                <div class="px-3 py-2 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
+                  <div class="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center text-orange-500 text-lg">
+                    ⚠
+                  </div>
+                  <div>
+                    <p class="text-[11px] uppercase tracking-wide text-gray-400">Symptoms &amp; Causes</p>
+                    <p class="text-xs font-semibold text-gray-800">症状と想定される原因</p>
+                  </div>
+                </div>
+                <div id="detail-symptoms" class="px-3 py-3 text-gray-500 overflow-y-auto flex-1">
+                  まだナレッジが選択されていません。
+                </div>
+              </section>
+
+              <!-- 一次対応フロー -->
+              <section class="border border-gray-200 rounded-lg overflow-hidden p-0 h-56 flex flex-col">
+                <div class="px-3 py-2 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
+                  <div class="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 text-lg">
+                    ▶
+                  </div>
+                  <div>
+                    <p class="text-[11px] uppercase tracking-wide text-gray-400">First Response</p>
+                    <p class="text-xs font-semibold text-gray-800">一次対応フロー（オペレーター案内用）</p>
+                  </div>
+                </div>
+                <div id="detail-flow" class="px-3 py-3 text-gray-500 overflow-y-auto flex-1">
+                  まだナレッジが選択されていません。
+                </div>
+              </section>
+
+              <!-- 引用元ドキュメント -->
+              <section class="border border-gray-200 rounded-lg overflow-hidden p-0 h-56 flex flex-col">
+                <div class="px-3 py-2 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
+                  <div class="w-8 h-8 rounded-full bg-sky-50 flex items-center justify-center text-sky-600 text-lg">
+                    📄
+                  </div>
+                  <div>
+                    <p class="text-[11px] uppercase tracking-wide text-gray-400">Source Documents</p>
+                    <p class="text-xs font-semibold text-gray-800">引用元ドキュメント</p>
+                  </div>
+                </div>
+                <div id="detail-docs" class="px-3 py-3 text-gray-500 overflow-y-auto flex-1">
+                  まだナレッジが選択されていません。
+                </div>
+              </section>
+
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+  <!-- JS 読み込み順に注意 -->
+  <script src="../assets/js/common/domUtils.js"></script>
+  <script src="../assets/js/common/pinUtils.js"></script>
+  <script src="../assets/js/operator/operatorData.js"></script>
+  <script src="../assets/js/operator/operator.js"></script>
+</body>
+</html>
