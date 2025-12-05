@@ -103,10 +103,10 @@ function startUtteranceFlow() {
     // 自動モード時の AI示唆トリガ
     if (state.mode === "auto" && !state.autoUpdatesPaused) {
       if (state.utteranceIndex === 3 && state.lastAutoVersion !== "v1") {
-        applySuggestion("v1");
+        triggerAISuggestion("v1");
         state.lastAutoVersion = "v1";
       } else if (state.utteranceIndex === 6 && state.lastAutoVersion !== "v2") {
-        applySuggestion("v2");
+        triggerAISuggestion("v2");
         state.lastAutoVersion = "v2";
       }
     }
@@ -425,6 +425,17 @@ function applySuggestion(versionKey) {
   clearKnowledgeDetail(); // 引用元ナレッジをクリックするまで詳細は表示しない
 }
 
+// --- ローディング後にAI示唆を表示 ---
+function triggerAISuggestion(versionKey) {
+  // ① 先にローディング表示
+  renderLoadingState();
+
+  // ② 疑似API待ち（実運用では実APIの await に置換）
+  setTimeout(() => {
+    applySuggestion(versionKey);
+  }, 1000); // 300〜800msで調整可
+}
+
 // ==============================
 // ナレッジ詳細
 // ==============================
@@ -542,7 +553,7 @@ function initModeHandlers() {
   btnFetch.addEventListener("click", () => {
     if (state.mode !== "manual") return;
     // 手動モードでは常に最新精度版（v2）を出す想定
-    applySuggestion("v2");
+    triggerAISuggestion("v2");
   });
 }
 
@@ -565,3 +576,199 @@ function init() {
 }
 
 window.addEventListener("DOMContentLoaded", init);
+
+// ==============================
+// AI出力中（ローディング）表示
+// ==============================
+function renderLoadingState() {
+  //
+  // 1) 追加で確認すべき質問（followups）
+  //
+  if (state.followups && state.followups.length) {
+    followupContentEl.innerHTML = "";
+
+    const ul = document.createElement("ul");
+    ul.className = "space-y-1";
+
+    // ピン留め済みだけを描画
+    const pinnedFollowups = sortPinnedFirst(state.followups).filter((i) => i.pinned);
+
+    pinnedFollowups.forEach((item) => {
+      const li = document.createElement("li");
+      li.dataset.id = item.id;
+
+      const row = document.createElement("div");
+      row.className = [
+        "flex items-start justify-between gap-2 px-2 py-1 rounded",
+        "bg-yellow-50"
+      ].join(" ");
+
+      const text = document.createElement("span");
+      text.className = "text-sm";
+      text.textContent = item.text;
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = [
+        "ml-2 shrink-0 text-xs px-2 py-1 rounded-full border",
+        "border-yellow-400 bg-yellow-100 text-yellow-700"
+      ].join(" ");
+      btn.textContent = "📌";
+      btn.title = "ピン留めを解除";
+
+      btn.addEventListener("click", () => {
+        item.pinned = !item.pinned;
+        // ローディング中も状態に応じて再描画
+        renderLoadingState();
+      });
+
+      row.appendChild(text);
+      row.appendChild(btn);
+      li.appendChild(row);
+      ul.appendChild(li);
+    });
+
+    // 未ピン部分のローディングプレースホルダ
+    const loadingLi = document.createElement("li");
+    loadingLi.innerHTML =
+      `<div class="px-2 py-1 text-xs text-gray-400">AI出力中…</div>`;
+    ul.appendChild(loadingLi);
+
+    followupContentEl.appendChild(ul);
+  } else {
+    // まだ何も無い場合は全体をローディング表示
+    followupContentEl.innerHTML =
+      `<div class="px-2 py-1 text-xs text-gray-400">AI出力中…</div>`;
+  }
+
+  //
+  // 2) 推定される原因候補（causes）
+  //
+  if (state.causes && state.causes.length) {
+    causesContentEl.innerHTML = "";
+
+    const ul = document.createElement("ul");
+    ul.className = "space-y-1";
+
+    const pinnedCauses = sortPinnedFirst(state.causes).filter((i) => i.pinned);
+
+    pinnedCauses.forEach((item) => {
+      const li = document.createElement("li");
+      li.dataset.id = item.id;
+
+      const row = document.createElement("div");
+      row.className = [
+        "flex items-start justify-between gap-2 px-2 py-1 rounded",
+        "bg-yellow-50"
+      ].join(" ");
+
+      const text = document.createElement("span");
+      text.className = "text-sm";
+      text.textContent = item.text;
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = [
+        "ml-2 shrink-0 text-xs px-2 py-1 rounded-full border",
+        "border-yellow-400 bg-yellow-100 text-yellow-700"
+      ].join(" ");
+      btn.textContent = "📌";
+      btn.title = "ピン留めを解除";
+
+      btn.addEventListener("click", () => {
+        item.pinned = !item.pinned;
+        renderLoadingState();
+      });
+
+      row.appendChild(text);
+      row.appendChild(btn);
+      li.appendChild(row);
+      ul.appendChild(li);
+    });
+
+    const loadingLi = document.createElement("li");
+    loadingLi.innerHTML =
+      `<div class="px-2 py-1 text-xs text-gray-400">AI出力中…</div>`;
+    ul.appendChild(loadingLi);
+
+    causesContentEl.appendChild(ul);
+  } else {
+    causesContentEl.innerHTML =
+      `<div class="px-2 py-1 text-xs text-gray-400">AI出力中…</div>`;
+  }
+
+  //
+  // 3) 一次案内文（トーク例）
+  //
+  if (scriptContentEl) {
+    scriptContentEl.innerHTML =
+      `<div class="px-2 py-1 text-xs text-gray-400">AI出力中…</div>`;
+  }
+
+  //
+  // 4) 引用元ナレッジ（sources）
+  //
+  if (state.sources && state.sources.length) {
+    sourcesContentEl.innerHTML = "";
+
+    const ul = document.createElement("ul");
+    ul.className = "space-y-1 text-sm";
+
+    const pinnedSources = sortPinnedFirst(state.sources).filter((i) => i.pinned);
+
+    pinnedSources.forEach((item) => {
+      const li = document.createElement("li");
+
+      // ★ row 全体をハイライト対象にする
+      const row = document.createElement("div");
+      row.className = [
+        "flex items-center justify-between gap-2 px-2 py-1 rounded border",
+        "bg-yellow-50 border-yellow-400"
+      ].join(" ");
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.dataset.knowledgeId = item.id;
+      btn.className = "w-full text-left text-sm text-gray-900";
+      btn.textContent = item.label || item.id;
+
+      btn.addEventListener("click", () => {
+        state.sources.forEach((s) => {
+          s.active = s.id === item.id;
+        });
+        renderLoadingState();
+        applyKnowledgeDetail(item.id);
+      });
+
+      const pinBtn = document.createElement("button");
+      pinBtn.type = "button";
+      pinBtn.className =
+        "ml-2 shrink-0 text-xs px-2 py-1 rounded-full border border-yellow-400 bg-yellow-100 text-yellow-700";
+      pinBtn.textContent = "📌";
+      pinBtn.title = "ピン留めを解除";
+
+      pinBtn.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        item.pinned = false;
+        renderLoadingState();
+      });
+
+      row.appendChild(btn);
+      row.appendChild(pinBtn);
+      li.appendChild(row);
+      ul.appendChild(li);
+    });
+
+    // ローディング行
+    const loadingLi = document.createElement("li");
+    loadingLi.innerHTML =
+      `<div class="px-2 py-1 text-xs text-gray-400">AI出力中…</div>`;
+    ul.appendChild(loadingLi);
+
+    sourcesContentEl.appendChild(ul);
+  } else {
+    sourcesContentEl.innerHTML =
+      `<div class="px-2 py-1 text-xs text-gray-400">AI出力中…</div>`;
+  }
+}
+

@@ -10,7 +10,6 @@
   const listBodyEl = document.getElementById("knowledge-list-body");
   const listEmptyEl = document.getElementById("knowledge-list-empty");
 
-  const searchInput   = document.getElementById("knowledge-search");
   const kindFilterEl  = document.getElementById("knowledge-kind-filter");
   const updatedFilterEl = document.getElementById("knowledge-updated-filter");
 
