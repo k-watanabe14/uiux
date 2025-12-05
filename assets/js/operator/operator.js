@@ -433,7 +433,7 @@ function triggerAISuggestion(versionKey) {
   // ② 疑似API待ち（実運用では実APIの await に置換）
   setTimeout(() => {
     applySuggestion(versionKey);
-  }, 1000); // 300〜800msで調整可
+  }, 800); // 300〜800msで調整可
 }
 
 // ==============================

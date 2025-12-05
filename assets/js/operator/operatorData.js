@@ -65,8 +65,7 @@ window.OPERATOR_DATA = (function () {
       sources: [
         { id: "ac-err-03", text: "AC-ERR-03：赤点滅3回時のエラーコード定義と判別手順", pinned: false },
         { id: "ac-safe-01", text: "AC-SAFE-01：内部過熱保護が動作した場合の確認・復旧フロー", pinned: false },
-        { id: "ac-sensor-05", text: "AC-SENSOR-05：温度センサー異常が疑われる際の現地切り分け手順", pinned: false },
-        { id: "ac-filter-02", text: "AC-FILTER-02：フィルター・熱交換器の汚れ起因トラブル一覧", pinned: false }
+        { id: "ac-sensor-05", text: "AC-SENSOR-05：温度センサー異常が疑われる際の現地切り分け手順", pinned: false }
       ]
     },
     v2: {

@@ -344,10 +344,13 @@
     filteredItems = [...DATA];
     renderList();
 
-    // 初期選択: URL パラメータ id があればそれ、なければ先頭
-    const initialId = getQueryId() || (DATA[0] && DATA[0].id);
+    // 初期選択:
+    const initialId = getQueryId();
     if (initialId) {
       selectKnowledge(initialId);
+    } else {
+      // 明示的に「何も選択されていない状態」を表示
+      renderDetail(null);
     }
   }
 

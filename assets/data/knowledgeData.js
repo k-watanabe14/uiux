@@ -62,7 +62,7 @@ window.KNOWLEDGE_DATA = {
       kind: "手順書",
       status: "draft",
       statusLabel: "下書き",
-      updatedAt: "2025/09/12",
+      updatedAt: "2025/11/28",
       tags: ["給紙部", "紙詰まり", "ローラー交換"],
       series: "FK-2000 シリーズ",
 
@@ -105,7 +105,7 @@ window.KNOWLEDGE_DATA = {
       kind: "事例集",
       status: "published",
       statusLabel: "公開",
-      updatedAt: "2025/08/30",
+      updatedAt: "2025/11/30",
       tags: ["起動直後停止", "インシデント事例", "再発防止"],
       series: "複数機種",
 
@@ -150,7 +150,7 @@ window.KNOWLEDGE_DATA = {
       status: "published",
       statusLabel: "公開",
       series: "AC-9000シリーズ",
-      updatedAt: "2025-01-08",
+      updatedAt: "2025/07/08",
       tags: ["送風", "ファン異常"],
       overview: "送風が弱い、あるいは全く出ない場合の標準的な確認手順。",
       symptoms: [
@@ -177,7 +177,7 @@ window.KNOWLEDGE_DATA = {
       status: "published",
       statusLabel: "公開",
       series: "全シリーズ共通",
-      updatedAt: "2025-01-05",
+      updatedAt: "2025/12/05",
       tags: ["リモコン", "電池"],
       overview: "リモコンの信号が本体に届いていないときの代表的な原因と確認手順。",
       symptoms: [
@@ -195,32 +195,6 @@ window.KNOWLEDGE_DATA = {
       ]
     },
     {
-      id: "k-troubleshoot-012",
-      title: "異音がする場合の一次切り分け",
-      subtitle: "ファン・振動・配管の異常音対応",
-      errorCode: "NOISE-01",
-      kind: "トラブルシュート",
-      status: "draft",
-      statusLabel: "下書き",
-      series: "AC-8000/9000シリーズ",
-      updatedAt: "2025-01-02",
-      tags: ["異音", "振動"],
-      overview: "カラカラ音・ガタガタ音・高周波音など、異音の種類ごとの切り分けポイント。",
-      symptoms: [
-        "運転開始直後のみ異音がする",
-        "運転中ずっと周期的な音がする"
-      ],
-      flow: [
-        "音の種類（高音・低音・周期性）をヒアリング",
-        "室内機／室外機のどちらから発生しているか特定",
-        "設置状態（傾き・固定状態）を確認",
-        "重大な異常が疑われる場合は使用中止を案内"
-      ],
-      docs: [
-        { label: "異音トラブル FAQ 集", href: "#" }
-      ]
-    },
-    {
       id: "k-faq-013",
       title: "タイマーが意図せず作動する場合",
       subtitle: "予約タイマー／おやすみタイマーの誤設定",
@@ -229,7 +203,7 @@ window.KNOWLEDGE_DATA = {
       status: "published",
       statusLabel: "公開",
       series: "全シリーズ共通",
-      updatedAt: "2024-12-28",
+      updatedAt: "2025/11/28",
       tags: ["タイマー", "誤作動"],
       overview: "ユーザーの意図しないタイマー動作が発生しているときの確認ポイント。",
       symptoms: [
@@ -255,7 +229,7 @@ window.KNOWLEDGE_DATA = {
       status: "published",
       statusLabel: "公開",
       series: "AC-9000シリーズ",
-      updatedAt: "2024-12-20",
+      updatedAt: "2025/10/20",
       tags: ["E21", "通信異常"],
       overview: "室内機と室外機の通信が確立できない場合のエラー。",
       symptoms: [
@@ -281,7 +255,7 @@ window.KNOWLEDGE_DATA = {
       status: "published",
       statusLabel: "公開",
       series: "AC-7000/8000シリーズ",
-      updatedAt: "2024-12-15",
+      updatedAt: "2025/11/15",
       tags: ["フィルター", "目詰まり"],
       overview: "フィルターにほこりが溜まり、検知センサーが異常を検出した状態。",
       symptoms: [
@@ -307,7 +281,7 @@ window.KNOWLEDGE_DATA = {
       status: "published",
       statusLabel: "公開",
       series: "全シリーズ共通",
-      updatedAt: "2024-12-10",
+      updatedAt: "2025/09/10",
       tags: ["体感温度", "設定"],
       overview: "体感温度に関する問い合わせでよくある原因とヒアリング観点。",
       symptoms: [
@@ -325,32 +299,6 @@ window.KNOWLEDGE_DATA = {
       ]
     },
     {
-      id: "k-troubleshoot-017",
-      title: "Wi-Fi 接続ができない場合の確認",
-      subtitle: "ルーター・暗号方式・アプリ連携の切り分け",
-      errorCode: "NW-01",
-      kind: "トラブルシュート",
-      status: "draft",
-      statusLabel: "下書き",
-      series: "スマートモデル",
-      updatedAt: "2024-12-05",
-      tags: ["Wi-Fi", "ネットワーク"],
-      overview: "本体と家庭内ルーターの間で接続が確立できない場合の典型パターン。",
-      symptoms: [
-        "アプリから接続開始しても途中で失敗する",
-        "他の端末は Wi-Fi に接続できている"
-      ],
-      flow: [
-        "2.4GHz 帯の SSID への接続か確認",
-        "暗号化方式が対応範囲内か確認",
-        "ルーター再起動後に再試行を案内",
-        "改善しない場合はログ採取手順を案内"
-      ],
-      docs: [
-        { label: "ネットワーク接続ガイド", href: "#" }
-      ]
-    },
-    {
       id: "k-troubleshoot-018",
       title: "電源コードの異常発熱に関する問い合わせ",
       subtitle: "安全確認と使用中止判断の観点",
@@ -359,7 +307,7 @@ window.KNOWLEDGE_DATA = {
       status: "published",
       statusLabel: "公開",
       series: "全シリーズ共通",
-      updatedAt: "2024-11-30",
+      updatedAt: "2025/11/30",
       tags: ["安全", "発熱"],
       overview: "電源コードやコンセント周辺が熱いときの対応の枠組み。",
       symptoms: [
@@ -385,7 +333,7 @@ window.KNOWLEDGE_DATA = {
       status: "published",
       statusLabel: "公開",
       series: "ヒートポンプ全般",
-      updatedAt: "2024-11-25",
+      updatedAt: "2025/11/25",
       tags: ["霜取り", "氷結"],
       overview: "冬季に室外機周辺が凍結するケースで、正常動作と異常の境界を説明するナレッジ。",
       symptoms: [
@@ -410,7 +358,7 @@ window.KNOWLEDGE_DATA = {
       status: "draft",
       statusLabel: "下書き",
       series: "AC-9000シリーズ",
-      updatedAt: "2024-11-18",
+      updatedAt: "2025/11/18",
       tags: ["温度センサー", "H07"],
       overview: "温度センサー系統で異常が検知された場合の想定原因と対応。",
       symptoms: [
