@@ -237,8 +237,7 @@
     if (editBtnEl) {
       editBtnEl.disabled = false;
       editBtnEl.onclick = () => {
-        // まだ実装していないので、ひとまず遷移だけ
-        window.location.href = `/knowledge_edit.html?id=${encodeURIComponent(item.id)}`;
+        window.location.href = `./knowledge_edit.html?id=${encodeURIComponent(item.id)}`;
       };
     }
 

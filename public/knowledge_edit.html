@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>示唆出しシステム - ナレッジ編集</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 text-gray-900">
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-slate-950 to-slate-900 px-6 h-20 flex items-center justify-between text-white">
+    <div class="text-lg font-semibold tracking-tight">示唆出しシステム</div>
+    <div class="flex items-center gap-4 text-sm">
+      <span class="text-slate-200">オペレーター：山田 太郎</span>
+      <button class="px-3 py-1 rounded-full border border-slate-400/70 text-xs hover:bg-white/10">
+        設定
+      </button>
+      <button class="px-3 py-1 rounded-full bg-white text-slate-900 text-xs font-semibold hover:bg-slate-100">
+        ログアウト
+      </button>
+    </div>
+  </header>
+
+  <div class="flex">
+    <!-- Sidebar -->
+    <aside class="w-60 bg-white shadow-md min-h-[calc(100vh-56px)] p-4 border-r border-gray-200">
+      <div class="text-xs text-gray-500 font-semibold mb-2 uppercase">メニュー</div>
+      <nav class="space-y-1 text-sm">
+        <a href="./operator.html" class="block px-3 py-2 rounded-md hover:bg-gray-100">
+          オペレーター画面
+        </a>
+        <a href="./knowledge.html" class="block px-3 py-2 rounded-md bg-blue-600 text-white font-medium">
+          ナレッジ管理
+        </a>
+        <a href="./dashboard.html" class="block px-3 py-2 rounded-md hover:bg-gray-100">
+          ダッシュボード
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main -->
+    <main class="flex-1 p-6">
+      <!-- タイトル -->
+      <section class="mb-6">
+        <h1 class="text-2xl font-semibold mb-1">ナレッジ編集</h1>
+        <p class="text-sm text-gray-600">
+          一覧から選択したナレッジの内容を編集します。現在はデモ用のため、保存しても実際のデータは更新されません。
+        </p>
+        <p id="ke-target-id" class="text-xs text-gray-400 mt-1"></p>
+      </section>
+
+      <!-- 2カラム -->
+      <section class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <!-- 左：メタ情報 -->
+        <div class="bg-white border border-gray-200 rounded-xl p-4">
+          <h2 class="text-sm font-semibold text-gray-800 mb-4">基本情報</h2>
+
+          <form id="ke-form-meta" class="space-y-4" onsubmit="return false;">
+            <!-- タイトル -->
+            <div>
+              <label for="ke-title" class="block text-xs font-semibold text-gray-600 mb-1">
+                タイトル <span class="text-red-500">*</span>
+              </label>
+              <input
+                id="ke-title"
+                type="text"
+                class="block w-full text-sm border border-gray-300 rounded-md px-3 py-2
+                       focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
+            <!-- サブタイトル -->
+            <div>
+              <label for="ke-subtitle" class="block text-xs font-semibold text-gray-600 mb-1">
+                サブタイトル / 概要タイトル
+              </label>
+              <input
+                id="ke-subtitle"
+                type="text"
+                class="block w-full text-sm border border-gray-300 rounded-md px-3 py-2
+                       focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
+            <!-- エラーコード・種別 -->
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label for="ke-error-code" class="block text-xs font-semibold text-gray-600 mb-1">
+                  エラーコード
+                </label>
+                <input
+                  id="ke-error-code"
+                  type="text"
+                  class="block w-full text-sm border border-gray-300 rounded-md px-3 py-2
+                         focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              <div>
+                <label for="ke-kind" class="block text-xs font-semibold text-gray-600 mb-1">
+                  種別
+                </label>
+                <select
+                  id="ke-kind"
+                  class="block w-full text-sm border border-gray-300 rounded-md px-3 py-2 bg-white
+                         focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">選択してください</option>
+                  <option value="FAQ">FAQ</option>
+                  <option value="手順書">手順書</option>
+                  <option value="事例集">事例集</option>
+                  <option value="トラブルシュート">トラブルシュート</option>
+                  <option value="その他">その他</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- ステータス・最終更新 -->
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label for="ke-status" class="block text-xs font-semibold text-gray-600 mb-1">
+                  ステータス
+                </label>
+                <select
+                  id="ke-status"
+                  class="block w-full text-sm border border-gray-300 rounded-md px-3 py-2 bg-white
+                         focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">未設定</option>
+                  <option value="published">公開</option>
+                  <option value="draft">下書き</option>
+                  <option value="archived">アーカイブ</option>
+                </select>
+              </div>
+              <div>
+                <label for="ke-updated" class="block text-xs font-semibold text-gray-600 mb-1">
+                  最終更新日
+                </label>
+                <input
+                  id="ke-updated"
+                  type="text"
+                  placeholder="例）2025/01/01"
+                  class="block w-full text-sm border border-gray-300 rounded-md px-3 py-2
+                         focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
+
+            <!-- 対象機種 / タグ -->
+            <div>
+              <label for="ke-series" class="block text-xs font-semibold text-gray-600 mb-1">
+                対象機種・シリーズ
+              </label>
+              <input
+                id="ke-series"
+                type="text"
+                class="block w-full text-sm border border-gray-300 rounded-md px-3 py-2
+                       focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
+            <div>
+              <label for="ke-tags" class="block text-xs font-semibold text-gray-600 mb-1">
+                タグ
+              </label>
+              <input
+                id="ke-tags"
+                type="text"
+                placeholder="カンマ区切りで指定（例：給紙部, センサー, 起動直後停止）"
+                class="block w-full text-sm border border-gray-300 rounded-md px-3 py-2
+                       focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+          </form>
+        </div>
+
+        <!-- 右：内容編集 -->
+        <div class="bg-white border border-gray-200 rounded-xl p-4 flex flex-col">
+          <h2 class="text-sm font-semibold text-gray-800 mb-4">ナレッジ内容</h2>
+
+          <form id="ke-form-body" class="space-y-4 flex-1 flex flex-col" onsubmit="return false;">
+            <!-- 概要 -->
+            <div>
+              <label for="ke-overview" class="block text-xs font-semibold text-gray-600 mb-1">
+                概要
+              </label>
+              <textarea
+                id="ke-overview"
+                rows="4"
+                class="block w-full text-sm border border-gray-300 rounded-md px-3 py-2 resize-y
+                       focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              ></textarea>
+            </div>
+
+            <!-- 症状と想定される原因 -->
+            <div>
+              <label for="ke-symptoms" class="block text-xs font-semibold text-gray-600 mb-1">
+                症状と想定される原因
+              </label>
+              <textarea
+                id="ke-symptoms"
+                rows="4"
+                class="block w-full text-sm border border-gray-300 rounded-md px-3 py-2 resize-y
+                       focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              ></textarea>
+              <p class="mt-1 text-[11px] text-gray-400">
+                1行につき1項目として登録されます。
+              </p>
+            </div>
+
+            <!-- 一次対応フロー -->
+            <div>
+              <label for="ke-flow" class="block text-xs font-semibold text-gray-600 mb-1">
+                一次対応フロー（オペレーター案内用）
+              </label>
+              <textarea
+                id="ke-flow"
+                rows="4"
+                class="block w-full text-sm border border-gray-300 rounded-md px-3 py-2 resize-y
+                       focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              ></textarea>
+              <p class="mt-1 text-[11px] text-gray-400">
+                1行につき1ステップとして登録されます。
+              </p>
+            </div>
+
+            <!-- 関連資料 -->
+            <div class="flex-1">
+              <label for="ke-docs" class="block text-xs font-semibold text-gray-600 mb-1">
+                関連資料（関連ドキュメント）
+              </label>
+              <textarea
+                id="ke-docs"
+                rows="4"
+                class="block w-full text-sm border border-gray-300 rounded-md px-3 py-2 resize-y
+                       focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              ></textarea>
+              <p class="mt-1 text-[11px] text-gray-400">
+                1行につき <code>タイトル | URL</code> の形式で入力してください。URL がない場合はタイトルだけでも構いません。
+              </p>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- フッターボタン -->
+      <section class="mt-6 flex items-center justify-end gap-3">
+        <button
+          type="button"
+          class="px-4 py-2 text-xs rounded-full border border-gray-300 text-gray-700 bg-white hover:bg-gray-50"
+          id="ke-back-btn"
+        >
+          戻る
+        </button>
+        <button
+          type="button"
+          class="px-4 py-2 text-xs rounded-full border border-amber-400 text-amber-700 bg-amber-50 hover:bg-amber-100"
+          id="ke-draft-btn"
+        >
+          下書き保存
+        </button>
+        <button
+          type="button"
+          class="px-4 py-2 text-xs rounded-full bg-blue-600 text-white hover:bg-blue-700"
+          id="ke-save-btn"
+        >
+          保存して一覧へ
+        </button>
+      </section>
+    </main>
+  </div>
+
+  <!-- データ & JS -->
+  <script src="../assets/data/knowledgeData.js"></script>
+  <script src="../assets/js/knowledge/knowledgeEdit.js"></script>
+</body>
+</html>

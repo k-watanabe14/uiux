@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>示唆出しシステム - ナレッジ登録</title>
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 text-gray-900">
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-slate-950 to-slate-900 px-6 h-20 flex items-center justify-between text-white">
+    <div class="text-lg font-semibold tracking-tight">示唆出しシステム</div>
+    <div class="flex items-center gap-4 text-sm">
+      <span class="text-slate-200">オペレーター：山田 太郎</span>
+      <button class="px-3 py-1 rounded-full border border-slate-400/70 text-xs hover:bg-white/10">
+        設定
+      </button>
+      <button class="px-3 py-1 rounded-full bg-white text-slate-900 text-xs font-semibold hover:bg-slate-100">
+        ログアウト
+      </button>
+    </div>
+  </header>
+
+  <div class="flex">
+    <!-- Sidebar -->
+    <aside class="w-60 bg-white shadow-md min-h-[calc(100vh-56px)] p-4 border-r border-gray-200">
+      <div class="text-xs text-gray-500 font-semibold mb-2 uppercase">メニュー</div>
+      <nav class="space-y-1 text-sm">
+        <a href="./operator.html" class="block px-3 py-2 rounded-md hover:bg-gray-100">
+          オペレーター画面
+        </a>
+        <a href="./knowledge.html" class="block px-3 py-2 rounded-md bg-blue-600 text-white font-medium">
+          ナレッジ管理
+        </a>
+        <a href="./dashboard.html" class="block px-3 py-2 rounded-md hover:bg-gray-100">
+          ダッシュボード
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main -->
+    <main class="flex-1 p-6">
+      <!-- タイトル -->
+      <section class="mb-6">
+        <h1 class="text-2xl font-semibold mb-1">ナレッジ登録</h1>
+        <p class="text-sm text-gray-600">
+          関連ドキュメントをアップロードして、AI が生成したナレッジを登録します。ここではダミー動作のみ実装されています。
+        </p>
+      </section>
+
+      <!-- 2カラムレイアウト -->
+      <section class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <!-- 左：ナレッジ情報フォーム -->
+        <div class="bg-white border border-gray-200 rounded-xl p-4">
+          <h2 class="text-sm font-semibold text-gray-800 mb-4">ナレッジ情報</h2>
+
+          <form id="knowledge-register-form" class="space-y-4" onsubmit="return false;">
+            <!-- ファイル -->
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-1">
+                ナレッジファイル
+                <span class="text-[10px] text-gray-400 ml-1">(PDF / Office / テキスト)</span>
+              </label>
+              <input
+                id="kr-file"
+                type="file"
+                class="block w-full text-xs text-gray-700 border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
+            <!-- タイトル -->
+            <div>
+              <label for="kr-title" class="block text-xs font-semibold text-gray-600 mb-1">
+                タイトル <span class="text-red-500">*</span>
+              </label>
+              <input
+                id="kr-title"
+                type="text"
+                placeholder="例）故障対応FAQ：E21エラーで確認すべきポイント"
+                class="block w-full text-sm border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
+            <!-- エラーコード & 種別 -->
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label for="kr-error-code" class="block text-xs font-semibold text-gray-600 mb-1">
+                  エラーコード
+                </label>
+                <input
+                  id="kr-error-code"
+                  type="text"
+                  placeholder="例）E21 / E10 など"
+                  class="block w-full text-sm border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label for="kr-kind" class="block text-xs font-semibold text-gray-600 mb-1">
+                  種別
+                </label>
+                <select
+                  id="kr-kind"
+                  class="block w-full text-sm border border-gray-300 rounded-md px-3 py-2 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">選択してください</option>
+                  <option value="FAQ">FAQ</option>
+                  <option value="手順書">手順書</option>
+                  <option value="事例集">事例集</option>
+                  <option value="トラブルシュート">トラブルシュート</option>
+                  <option value="その他">その他</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- タグ -->
+            <div>
+              <label for="kr-tags" class="block text-xs font-semibold text-gray-600 mb-1">
+                タグ
+              </label>
+              <input
+                id="kr-tags"
+                type="text"
+                placeholder="例）給紙部, 起動直後停止, センサー"
+                class="block w-full text-sm border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              />
+              <p class="mt-1 text-[11px] text-gray-400">カンマ区切りで複数指定できます。</p>
+            </div>
+
+            <!-- 対象機種 / シリーズ -->
+            <div>
+              <label for="kr-series" class="block text-xs font-semibold text-gray-600 mb-1">
+                対象機種 / シリーズ
+              </label>
+              <input
+                id="kr-series"
+                type="text"
+                placeholder="例）FK-1000 シリーズ"
+                class="block w-full text-sm border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
+            <!-- メモ -->
+            <div>
+              <label for="kr-memo" class="block text-xs font-semibold text-gray-600 mb-1">
+                メモ（管理者向け）
+              </label>
+              <textarea
+                id="kr-memo"
+                rows="5"
+                placeholder="ナレッジの背景や注意点などがあれば記載してください。"
+                class="block w-full text-sm border border-gray-300 rounded-md px-3 py-2 resize-y focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              ></textarea>
+            </div>
+          </form>
+        </div>
+
+        <!-- 右：ファイル情報 / オプション / プレビュー -->
+        <div class="bg-white border border-gray-200 rounded-xl p-4 flex flex-col">
+          <h2 class="text-sm font-semibold text-gray-800 mb-4">アップロード予定ファイル情報</h2>
+
+          <!-- ファイル情報 -->
+          <section class="mb-4 text-xs text-gray-700">
+            <p class="font-semibold text-gray-600 mb-1">ファイル情報</p>
+            <ul class="list-disc ml-4 space-y-0.5">
+              <li id="kr-file-name">ファイル名：未選択</li>
+              <li id="kr-file-size">ファイルサイズ：-</li>
+              <li id="kr-file-type">種別：-</li>
+              <li>対応フォーマット：PDF / Word / Excel / PowerPoint / テキスト</li>
+            </ul>
+          </section>
+
+          <!-- 取り込みオプション -->
+          <section class="mb-4 text-xs text-gray-700">
+            <p class="font-semibold text-gray-600 mb-1">取り込みオプション</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] text-gray-500 mb-0.5">AI検索の対象にする</label>
+                <select
+                  id="kr-option-ai-target"
+                  class="w-full border border-gray-300 rounded-md px-2 py-1.5 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="default">対象とする（デフォルト）</option>
+                  <option value="exclude">対象外にする</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-[11px] text-gray-500 mb-0.5">オペレーター画面での優先度</label>
+                <select
+                  id="kr-option-priority"
+                  class="w-full border border-gray-300 rounded-md px-2 py-1.5 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="normal">通常</option>
+                  <option value="high">高めに表示</option>
+                  <option value="low">低めに表示</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-[11px] text-gray-500 mb-0.5">ページ単位で分割して取り込む</label>
+                <select
+                  id="kr-option-split"
+                  class="w-full border border-gray-300 rounded-md px-2 py-1.5 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="auto">自動で分割する</option>
+                  <option value="single">分割せず1件として扱う</option>
+                </select>
+              </div>
+            </div>
+          </section>
+
+          <!-- プレビュー（イメージ） -->
+          <section class="mt-2 flex-1 flex flex-col">
+            <p class="text-xs font-semibold text-gray-600 mb-1">プレビュー（イメージ）</p>
+            <div
+              id="kr-preview"
+              class="flex-1 min-h-[160px] border border-dashed border-gray-300 rounded-lg bg-gray-50 px-4 py-3 text-xs text-gray-500"
+            >
+              ファイルをアップロードすると、ここにテキスト抜粋やサマリを表示する想定です。<br />
+              PoC段階では、AIによる要約結果や、エラーコードに関連する箇所をハイライトして表示することも検討できます。
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <!-- フッターボタン -->
+      <section class="mt-6 flex items-center justify-end gap-3">
+        <button
+          type="button"
+          class="px-4 py-2 text-xs rounded-full border border-gray-300 text-gray-700 bg-white hover:bg-gray-50"
+          id="kr-back-btn"
+        >
+          戻る
+        </button>
+        <button
+          type="button"
+          class="px-4 py-2 text-xs rounded-full border border-amber-400 text-amber-700 bg-amber-50 hover:bg-amber-100"
+          id="kr-draft-btn"
+        >
+          下書き保存
+        </button>
+        <button
+          type="button"
+          class="px-4 py-2 text-xs rounded-full bg-blue-600 text-white hover:bg-blue-700"
+          id="kr-submit-btn"
+        >
+          登録する
+        </button>
+      </section>
+    </main>
+  </div>
+
+  <!-- JS -->
+  <script src="../assets/js/knowledge/knowledgeRegister.js"></script>
+</body>
+</html>
