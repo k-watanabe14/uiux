@@ -8,14 +8,21 @@ const DATA =
     ? window.OPERATOR_DATA
     : {
         utterances: [],
-        suggestionVersions: {},
-        knowledgeDetails: {}
+        suggestionVersions: {}
       };
+
+// ナレッジデータ (knowledgeData.js の KNOWLEDGE_DATA.items を利用)
+const KNOWLEDGE_ITEMS =
+  (typeof window !== "undefined" &&
+    window.KNOWLEDGE_DATA &&
+    Array.isArray(window.KNOWLEDGE_DATA.items))
+    ? window.KNOWLEDGE_DATA.items
+    : [];
 
 // ==============================
 // 簡易ユーティリティ
 // ==============================
-const $ = (sel) => document.querySelector(sel);
+const $  = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
 // ==============================
@@ -248,7 +255,6 @@ function renderSources() {
     const li = document.createElement("li");
 
     const row = document.createElement("div");
-    // ★ 行コンテナ全体を pinned でハイライト
     row.className = [
       "flex items-start justify-between gap-2 px-2 py-1 rounded border text-xs transition-colors",
       item.pinned
@@ -261,9 +267,7 @@ function renderSources() {
     btn.dataset.knowledgeId = item.id;
     btn.className = [
       "w-full text-left text-sm",
-      item.active
-        ? "font-semibold text-slate-900"
-        : "text-blue-700"
+      item.active ? "font-semibold text-slate-900" : "text-blue-700"
     ].join(" ");
     btn.textContent = item.label;
 
@@ -301,7 +305,6 @@ function renderSources() {
   sourcesContentEl.appendChild(ul);
 }
 
-
 // --- 指定バージョンの AI示唆を適用 ---
 function applySuggestion(versionKey) {
   const versions = DATA.suggestionVersions || {};
@@ -310,9 +313,7 @@ function applySuggestion(versionKey) {
 
   state.currentSuggestionVersion = versionKey;
 
-  //
   // 1. 既存状態をスナップショット
-  //
   const prevFollowups = state.followups || [];
   const prevCauses    = state.causes || [];
   const prevSources   = state.sources || [];
@@ -336,13 +337,8 @@ function applySuggestion(versionKey) {
   const prevPinnedCauses    = prevCauses.filter((i) => i.pinned);
   const prevPinnedSources   = prevSources.filter((i) => i.pinned);
 
-  //
   // 2. 新しいサジェストを適用
-  //    - pinned なものは「前回のテキスト」をそのまま維持
-  //    - 新バージョンから消えた pinned も先頭側に追加して生かす
-  //
-
-  // --- followups ---
+  // followups
   let nextFollowups = (v.followups || []).map((item, idx) => {
     const id   = item.id || `f-${versionKey}-${idx + 1}`;
     const prev = prevFollowupMap[id];
@@ -351,13 +347,11 @@ function applySuggestion(versionKey) {
 
     return {
       id,
-      // pinned の場合は prev.text を優先して固定
       text: pinned && prev ? prev.text : (item.text || ""),
       pinned
     };
   });
 
-  // v2 側から消えた pinned も生き残らせる
   prevPinnedFollowups.forEach((p) => {
     if (!nextFollowups.some((x) => x.id === p.id)) {
       nextFollowups.unshift({
@@ -368,7 +362,7 @@ function applySuggestion(versionKey) {
     }
   });
 
-  // --- causes ---
+  // causes
   let nextCauses = (v.causes || []).map((item, idx) => {
     const id   = item.id || `c-${versionKey}-${idx + 1}`;
     const prev = prevCauseMap[id];
@@ -392,7 +386,7 @@ function applySuggestion(versionKey) {
     }
   });
 
-  // --- sources ---
+  // sources
   let nextSources = (v.sources || []).map((item, idx) => {
     const id   = item.id || `s-${versionKey}-${idx + 1}`;
     const prev = prevSourceMap[id];
@@ -401,10 +395,8 @@ function applySuggestion(versionKey) {
 
     return {
       id,
-      // ラベルも pinned の場合は前回のものを固定
       label: pinned && prev ? prev.label : (item.label || item.text || ""),
       pinned,
-      // active は以前の状態を引き継ぐ（なければ false）
       active: prev ? !!prev.active : false
     };
   });
@@ -424,52 +416,36 @@ function applySuggestion(versionKey) {
   state.causes    = nextCauses;
   state.sources   = nextSources;
 
-  //
   // 3. レンダリング & ナレッジ詳細は自動更新しない
-  //
   renderFollowups();
   renderCauses();
   renderScript(v.script);
   renderSources();
 
-  // 引用元ナレッジをクリックするまで詳細は表示しない
-  clearKnowledgeDetail();
-}
-
-// ナレッジ詳細を空にしてプレースホルダを表示
-function clearKnowledgeDetail() {
-  state.selectedKnowledgeId = null;
-
-  if (knowledgeSubtitleEl) {
-    knowledgeSubtitleEl.textContent = "引用元ナレッジを選択すると詳細が表示されます。";
-  }
-  if (detailOverviewEl) detailOverviewEl.textContent = "";
-  if (detailSymptomsEl) detailSymptomsEl.innerHTML = "";
-  if (detailFlowEl) detailFlowEl.innerHTML = "";
-  if (detailDocsEl) detailDocsEl.innerHTML = "";
+  clearKnowledgeDetail(); // 引用元ナレッジをクリックするまで詳細は表示しない
 }
 
 // ==============================
 // ナレッジ詳細
 // ==============================
 function applyKnowledgeDetail(id) {
-  const all = DATA.knowledgeDetails || {};
-  const k = all[id];
+  // knowledgeData.js から該当IDのナレッジを取得
+  const k = KNOWLEDGE_ITEMS.find((item) => item.id === id);
   if (!k) return;
 
   state.selectedKnowledgeId = id;
 
-    // ★ ナレッジが選択されたのでボタンを有効化
+  // ナレッジが選択されたのでボタンを有効化
   if (btnOpenKnowledgeTab) {
     btnOpenKnowledgeTab.disabled = false;
   }
 
-  knowledgeSubtitleEl.textContent = k.subtitle;
+  knowledgeSubtitleEl.textContent = k.subtitle || k.title || "";
 
   // 概要
-  detailOverviewEl.textContent = k.overview;
+  detailOverviewEl.textContent = k.overview || "";
 
-  // 症状と想定される原因（5行想定）
+  // 症状と想定される原因
   const ulSymptoms = document.createElement("ul");
   ulSymptoms.className = "list-disc ml-5 space-y-1";
   (k.symptoms || []).forEach((s) => {
@@ -491,14 +467,14 @@ function applyKnowledgeDetail(id) {
   detailFlowEl.innerHTML = "";
   detailFlowEl.appendChild(olFlow);
 
-  // 引用元ドキュメント
+  // 関連資料
   const ulDocs = document.createElement("ul");
   ulDocs.className = "list-disc ml-5 space-y-1";
   (k.docs || []).forEach((d) => {
     const li = document.createElement("li");
     const a = document.createElement("a");
     a.href = d.href || "#";
-    a.textContent = d.label;
+    a.textContent = d.label || d.href || "関連資料";
     a.className = "text-blue-600 hover:underline";
     a.target = "_blank";
     li.appendChild(a);
@@ -508,6 +484,7 @@ function applyKnowledgeDetail(id) {
   detailDocsEl.appendChild(ulDocs);
 }
 
+// ナレッジ詳細を空にしてプレースホルダを表示
 function clearKnowledgeDetail() {
   state.selectedKnowledgeId = null;
 
@@ -519,7 +496,7 @@ function clearKnowledgeDetail() {
   if (detailFlowEl) detailFlowEl.innerHTML = "";
   if (detailDocsEl) detailDocsEl.innerHTML = "";
 
-  // ★ ナレッジ未選択なのでボタンは無効化
+  // ナレッジ未選択なのでボタンは無効化
   if (btnOpenKnowledgeTab) {
     btnOpenKnowledgeTab.disabled = true;
   }
