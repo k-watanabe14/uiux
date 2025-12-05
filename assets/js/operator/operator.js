@@ -39,7 +39,7 @@ const detailSymptomsEl     = $("#detail-symptoms");
 const detailFlowEl         = $("#detail-flow");
 const detailDocsEl         = $("#detail-docs");
 
-const btnOpenKnowledgeTab  = $("#btn-open-knowledge"); // ナレッジ詳細右上の「別タブで開く」ボタン
+const btnOpenKnowledgeTab  = $("#btn-open-tab");
 
 // ==============================
 // 状態管理
@@ -459,6 +459,11 @@ function applyKnowledgeDetail(id) {
 
   state.selectedKnowledgeId = id;
 
+    // ★ ナレッジが選択されたのでボタンを有効化
+  if (btnOpenKnowledgeTab) {
+    btnOpenKnowledgeTab.disabled = false;
+  }
+
   knowledgeSubtitleEl.textContent = k.subtitle;
 
   // 概要
@@ -503,69 +508,29 @@ function applyKnowledgeDetail(id) {
   detailDocsEl.appendChild(ulDocs);
 }
 
+function clearKnowledgeDetail() {
+  state.selectedKnowledgeId = null;
+
+  if (knowledgeSubtitleEl) {
+    knowledgeSubtitleEl.textContent = "引用元ナレッジを選択すると詳細が表示されます。";
+  }
+  if (detailOverviewEl) detailOverviewEl.textContent = "";
+  if (detailSymptomsEl) detailSymptomsEl.innerHTML = "";
+  if (detailFlowEl) detailFlowEl.innerHTML = "";
+  if (detailDocsEl) detailDocsEl.innerHTML = "";
+
+  // ★ ナレッジ未選択なのでボタンは無効化
+  if (btnOpenKnowledgeTab) {
+    btnOpenKnowledgeTab.disabled = true;
+  }
+}
+
 // 別タブでナレッジ詳細を開く
 function openKnowledgeInNewTab() {
   const id = state.selectedKnowledgeId;
   if (!id) return;
 
-  const all = DATA.knowledgeDetails || {};
-  const k = all[id];
-  if (!k) return;
-
-  const win = window.open("", "_blank");
-  if (!win) return;
-
-  const html = `
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8" />
-  <title>${k.subtitle}</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-50 text-gray-900">
-  <main class="max-w-3xl mx-auto p-6 space-y-6">
-    <header>
-      <h1 class="text-2xl font-semibold mb-1">${k.subtitle}</h1>
-      <p class="text-sm text-gray-600">オペレーター支援ナレッジ詳細</p>
-    </header>
-
-    <section class="bg-white rounded-xl border border-gray-200 p-4">
-      <h2 class="text-sm font-semibold mb-2">概要</h2>
-      <p class="text-sm leading-relaxed">${k.overview}</p>
-    </section>
-
-    <section class="bg-white rounded-xl border border-gray-200 p-4">
-      <h2 class="text-sm font-semibold mb-2">症状と想定される原因</h2>
-      <ul class="list-disc ml-5 space-y-1 text-sm">
-        ${(k.symptoms || []).map((s) => `<li>${s}</li>`).join("")}
-      </ul>
-    </section>
-
-    <section class="bg-white rounded-xl border border-gray-200 p-4">
-      <h2 class="text-sm font-semibold mb-2">一次対応フロー</h2>
-      <ol class="list-decimal ml-5 space-y-1 text-sm">
-        ${(k.flow || []).map((s) => `<li>${s}</li>`).join("")}
-      </ol>
-    </section>
-
-    <section class="bg-white rounded-xl border border-gray-200 p-4">
-      <h2 class="text-sm font-semibold mb-2">引用元ドキュメント</h2>
-      <ul class="list-disc ml-5 space-y-1 text-sm">
-        ${(k.docs || []).map(
-          (d) =>
-            `<li><a href="${d.href || "#"}" class="text-blue-600 hover:underline" target="_blank">${d.label}</a></li>`
-        ).join("")}
-      </ul>
-    </section>
-  </main>
-</body>
-</html>
-  `.trim();
-
-  win.document.open();
-  win.document.write(html);
-  win.document.close();
+  window.open(`./knowledge_detail.html?id=${encodeURIComponent(id)}`, "_blank");
 }
 
 // ==============================

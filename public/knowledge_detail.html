@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>ナレッジ詳細 - 示唆出しシステム</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 text-gray-900">
+  <!-- 共通ヘッダー -->
+  <header class="bg-gradient-to-r from-slate-950 to-slate-900 px-6 h-20 flex items-center justify-between text-white">
+    <div class="text-lg font-semibold tracking-tight">
+      示唆出しシステム
+    </div>
+    <div class="flex items-center gap-4 text-sm">
+      <span class="text-slate-200">管理者：山田 太郎</span>
+      <button class="px-3 py-1 rounded-full border border-slate-400/70 text-xs hover:bg-white/10">
+        設定
+      </button>
+      <button class="px-3 py-1 rounded-full bg-white text-slate-900 text-xs font-semibold hover:bg-slate-100">
+        ログアウト
+      </button>
+    </div>
+  </header>
+
+  <!-- メイン -->
+  <main class="max-w-5xl mx-auto p-6 space-y-4">
+    <!-- タイトル行 -->
+    <div class="flex items-center justify-between mb-2">
+      <div>
+        <h1 id="detail-title" class="text-xl font-semibold">ナレッジ詳細</h1>
+        <p id="detail-subtitle" class="text-sm text-gray-600">
+          ナレッジを読み込み中です…
+        </p>
+        <p id="detail-meta" class="mt-1 text-xs text-gray-500">
+          <!-- JS でメタ情報を挿入 -->
+        </p>
+      </div>
+      <div class="flex items-center gap-2">
+        <span
+          id="detail-status-badge"
+          class="hidden text-[11px] px-2 py-0.5 rounded-full border border-gray-300 text-gray-600 bg-white"
+        >
+          <!-- status -->
+        </span>
+        <button
+          type="button"
+          class="px-3 py-1 text-xs rounded-full bg-slate-900 text-white hover:bg-slate-800"
+          onclick="window.close();"
+        >
+          タブを閉じる
+        </button>
+      </div>
+    </div>
+
+    <!-- ナレッジ詳細カード群 -->
+    <section class="space-y-4">
+      <!-- 概要 -->
+      <article class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <header class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 text-xl">
+            ℹ
+          </div>
+          <div>
+            <p class="text-[11px] uppercase tracking-wide text-gray-400">Overview</p>
+            <p class="text-xs font-semibold text-gray-800">概要</p>
+          </div>
+        </header>
+        <div id="section-overview" class="px-4 py-3 text-sm text-gray-700 leading-relaxed">
+          <!-- JS で挿入 -->
+        </div>
+      </article>
+
+      <!-- 症状と想定される原因 -->
+      <article class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <header class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-orange-50 flex items-center justify-center text-orange-500 text-xl">
+            ⚠
+          </div>
+          <div>
+            <p class="text-[11px] uppercase tracking-wide text-gray-400">Symptoms &amp; Causes</p>
+            <p class="text-xs font-semibold text-gray-800">症状と想定される原因</p>
+          </div>
+        </header>
+        <div id="section-symptoms" class="px-4 py-3 text-sm text-gray-700 leading-relaxed">
+          <!-- JS で挿入 -->
+        </div>
+      </article>
+
+      <!-- 一次対応フロー -->
+      <article class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <header class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 text-xl">
+            ▶
+          </div>
+          <div>
+            <p class="text-[11px] uppercase tracking-wide text-gray-400">First Response</p>
+            <p class="text-xs font-semibold text-gray-800">一次対応フロー（オペレーター案内用）</p>
+          </div>
+        </header>
+        <div id="section-flow" class="px-4 py-3 text-sm text-gray-700 leading-relaxed">
+          <!-- JS で挿入 -->
+        </div>
+      </article>
+
+      <!-- 関連資料 -->
+      <article class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <header class="px-4 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-sky-50 flex items-center justify-center text-sky-600 text-xl">
+            📄
+          </div>
+          <div>
+            <p class="text-[11px] uppercase tracking-wide text-gray-400">Related Documents</p>
+            <p class="text-xs font-semibold text-gray-800">関連資料</p>
+          </div>
+        </header>
+        <div id="section-docs" class="px-4 py-3 text-sm text-gray-700 leading-relaxed">
+          <!-- JS で挿入 -->
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <!-- Data & JS -->
+  <script src="../assets/data/knowledgeData.js"></script>
+  <script>
+    (function () {
+      const all =
+        (typeof window !== "undefined" &&
+          window.KNOWLEDGE_DATA &&
+          Array.isArray(window.KNOWLEDGE_DATA.items))
+          ? window.KNOWLEDGE_DATA.items
+          : [];
+
+      function getQueryId() {
+        const url = new URL(window.location.href);
+        return url.searchParams.get("id");
+      }
+
+      const titleEl   = document.getElementById("detail-title");
+      const subEl     = document.getElementById("detail-subtitle");
+      const metaEl    = document.getElementById("detail-meta");
+      const statusEl  = document.getElementById("detail-status-badge");
+
+      const overviewEl  = document.getElementById("section-overview");
+      const symptomsEl  = document.getElementById("section-symptoms");
+      const flowEl      = document.getElementById("section-flow");
+      const docsEl      = document.getElementById("section-docs");
+
+      function renderNotFound() {
+        titleEl.textContent = "ナレッジが見つかりません";
+        subEl.textContent   = "URL が不正か、対象ナレッジが削除された可能性があります。";
+        metaEl.textContent  = "";
+        statusEl.classList.add("hidden");
+
+        overviewEl.textContent = "表示できる情報がありません。";
+        symptomsEl.textContent = "表示できる情報がありません。";
+        flowEl.textContent     = "表示できる情報がありません。";
+        docsEl.textContent     = "表示できる情報がありません。";
+      }
+
+      function render(item) {
+        if (!item) {
+          renderNotFound();
+          return;
+        }
+
+        // タイトル & サブタイトル
+        titleEl.textContent = item.title || "ナレッジ詳細";
+        const subtitleParts = [];
+        if (item.errorCode && item.errorCode !== "-") subtitleParts.push(item.errorCode);
+        if (item.series) subtitleParts.push(item.series);
+        subEl.textContent = subtitleParts.join(" / ") || "";
+
+        // メタ情報
+        const metaParts = [];
+        if (item.updatedAt) metaParts.push(`最終更新: ${item.updatedAt}`);
+        if (item.kind) metaParts.push(`種別: ${item.kind}`);
+        if (item.tags && item.tags.length) metaParts.push(`タグ: ${item.tags.join(" / ")}`);
+        metaEl.textContent = metaParts.join("　|　");
+
+        // ステータスバッジ
+        if (item.statusLabel) {
+          statusEl.textContent = item.statusLabel;
+          statusEl.classList.remove("hidden");
+          if (item.status === "published") {
+            statusEl.className =
+              "text-[11px] px-2 py-0.5 rounded-full border border-emerald-400 text-emerald-700 bg-emerald-50";
+          } else if (item.status === "draft") {
+            statusEl.className =
+              "text-[11px] px-2 py-0.5 rounded-full border border-amber-400 text-amber-700 bg-amber-50";
+          } else {
+            statusEl.className =
+              "text-[11px] px-2 py-0.5 rounded-full border border-gray-300 text-gray-600 bg-white";
+          }
+        } else {
+          statusEl.classList.add("hidden");
+        }
+
+        // 概要
+        overviewEl.textContent = item.overview || "概要情報が登録されていません。";
+
+        // 症状 & 原因
+        symptomsEl.innerHTML = "";
+        if (item.symptoms && item.symptoms.length) {
+          const ul = document.createElement("ul");
+          ul.className = "list-disc ml-6 space-y-1";
+          item.symptoms.forEach((s) => {
+            const li = document.createElement("li");
+            li.textContent = s;
+            ul.appendChild(li);
+          });
+          symptomsEl.appendChild(ul);
+        } else {
+          symptomsEl.textContent = "症状と原因の情報が登録されていません。";
+        }
+
+        // 一次対応フロー
+        flowEl.innerHTML = "";
+        if (item.flow && item.flow.length) {
+          const ol = document.createElement("ol");
+          ol.className = "list-decimal ml-6 space-y-1";
+          item.flow.forEach((s) => {
+            const li = document.createElement("li");
+            li.textContent = s;
+            ol.appendChild(li);
+          });
+          flowEl.appendChild(ol);
+        } else {
+          flowEl.textContent = "一次対応フローが登録されていません。";
+        }
+
+        // 関連資料
+        docsEl.innerHTML = "";
+        if (item.docs && item.docs.length) {
+          const ul = document.createElement("ul");
+          ul.className = "list-disc ml-6 space-y-1";
+          item.docs.forEach((d) => {
+            const li = document.createElement("li");
+            const a  = document.createElement("a");
+            a.href   = d.href || "#";
+            a.textContent = d.label || d.href || "関連資料";
+            a.className   = "text-blue-600 hover:underline";
+            a.target      = "_blank";
+            li.appendChild(a);
+            ul.appendChild(li);
+          });
+          docsEl.appendChild(ul);
+        } else {
+          docsEl.textContent = "関連資料は登録されていません。";
+        }
+      }
+
+      const id = getQueryId();
+      const item = id ? all.find((x) => x.id === id) : all[0];
+
+      if (!all.length) {
+        renderNotFound();
+      } else {
+        render(item);
+      }
+    })();
+  </script>
+</body>
+</html>
