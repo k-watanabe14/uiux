@@ -44,11 +44,18 @@
         </a>
       </nav>
 
-      <div class="mt-6 text-xs text-gray-500">
-        <div class="font-semibold mb-2 uppercase">ヒント</div>
-        <p class="text-[11px] leading-relaxed">
-          関連資料をもとにナレッジを整備すると、オペレーター画面の AI 示唆とナレッジ詳細の精度が向上します。
-        </p>
+      <div class="mt-6">
+        <div class="text-xs text-gray-500 font-semibold mb-2 uppercase">最近のセッション</div>
+        <div class="space-y-2 text-sm">
+          <div class="border border-gray-200 rounded-md p-2 bg-gray-50">
+            <div class="font-medium">E21-2024-001</div>
+            <div class="text-xs text-green-600">通話中</div>
+          </div>
+          <div class="border border-gray-200 rounded-md p-2 bg-gray-50">
+            <div class="font-medium">E21-2024-002</div>
+            <div class="text-xs text-gray-500">待機</div>
+          </div>
+        </div>
       </div>
     </aside>
 
@@ -91,14 +98,51 @@
                 placeholder="キーワードで検索（タイトル・エラーコードなど）"
                 class="flex-1 border border-gray-300 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
-              <select
+            </div>
+
+            <!-- フィルターバー -->
+            <div class="flex flex-wrap items-center gap-3 mb-3">
+
+            <!-- 種別フィルタ -->
+            <div class="flex items-center gap-2">
+                <label for="knowledge-kind-filter" class="text-xs text-gray-500">種別</label>
+                <select
+                id="knowledge-kind-filter"
+                class="rounded-md border border-gray-300 px-2 py-1 text-xs bg-white"
+                >
+                <option value="">すべて</option>
+                <option value="手順書">手順書</option>
+                <option value="トラブルシュート">トラブルシュート</option>
+                <option value="FAQ">FAQ</option>
+                </select>
+            </div>
+
+            <!-- 最終更新フィルタ -->
+            <div class="flex items-center gap-2">
+                <label for="knowledge-updated-filter" class="text-xs text-gray-500">最終更新</label>
+                <select
+                id="knowledge-updated-filter"
+                class="rounded-md border border-gray-300 px-2 py-1 text-xs bg-white"
+                >
+                <option value="all">すべて</option>
+                <option value="7">直近7日</option>
+                <option value="30">直近30日</option>
+                <option value="90">直近90日</option>
+                </select>
+            </div>
+
+            <!-- ステータスフィルタ -->
+                <div class="flex items-center gap-2">
+                <label for="knowledge-updated-filter" class="text-xs text-gray-500">ステータス</label>
+                <select
                 id="knowledge-status-filter"
                 class="border border-gray-300 rounded-lg px-2 py-1 text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              >
+                >
                 <option value="">すべて</option>
                 <option value="published">公開</option>
                 <option value="draft">下書き</option>
-              </select>
+                </select>
+                </div>
             </div>
 
             <!-- 一覧テーブル -->
@@ -106,14 +150,14 @@
               <table class="min-w-full text-xs">
                 <thead class="bg-gray-100 border-b border-gray-200 text-gray-500">
                   <tr>
-                    <th class="px-3 py-2 text-left font-medium w-[45%]">タイトル</th>
+                    <th class="px-3 py-2 text-left font-medium w-[55%]">タイトル</th>
                     <th class="px-2 py-2 text-left font-medium w-[15%]">エラーコード</th>
                     <th class="px-2 py-2 text-left font-medium w-[15%]">種別</th>
-                    <th class="px-2 py-2 text-left font-medium w-[25%]">最終更新</th>
+                    <th class="px-2 py-2 text-left font-medium w-[15%]">最終更新</th>
                   </tr>
                 </thead>
               </table>
-              <div class="max-h-[420px] overflow-y-auto">
+              <div class="overflow-y-auto">
                 <table class="min-w-full text-xs">
                   <tbody id="knowledge-list-body" class="bg-white divide-y divide-gray-100">
                     <!-- JS で行を追加 -->
@@ -130,7 +174,7 @@
 
         <!-- 右: ナレッジ詳細（参照のみ） -->
         <div class="col-span-7">
-          <div class="bg-gray-50 border border-gray-300 rounded-xl p-4 h-full flex flex-col">
+          <div class="bg-white border border-gray-300 rounded-xl p-4 h-full flex flex-col">
             <div class="flex items-center justify-between mb-2">
               <div>
                 <h2 class="text-sm font-semibold">ナレッジ詳細</h2>
@@ -165,7 +209,7 @@
             <div class="mt-0 text-sm leading-relaxed space-y-3 flex-1" id="knowledge-detail-body">
               <!-- 概要 -->
               <section class="border border-gray-200 rounded-lg p-0 h-56 flex flex-col bg-white">
-                <div class="px-3 py-2 border-b border-gray-100 flex items-center gap-2">
+                <div class="px-3 py-2 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
                   <div class="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 text-lg">
                     ℹ
                   </div>
@@ -181,7 +225,7 @@
 
               <!-- 症状と想定される原因 -->
               <section class="border border-gray-200 rounded-lg p-0 h-56 flex flex-col bg-white">
-                <div class="px-3 py-2 border-b border-gray-100 flex items-center gap-2">
+                <div class="px-3 py-2 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
                   <div class="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center text-orange-500 text-lg">
                     ⚠
                   </div>
@@ -197,7 +241,7 @@
 
               <!-- 一次対応フロー -->
               <section class="border border-gray-200 rounded-lg p-0 h-56 flex flex-col bg-white">
-                <div class="px-3 py-2 border-b border-gray-100 flex items-center gap-2">
+                <div class="px-3 py-2 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
                   <div class="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 text-lg">
                     ▶
                   </div>
@@ -213,7 +257,7 @@
 
               <!-- 関連資料 -->
               <section class="border border-gray-200 rounded-lg p-0 h-56 flex flex-col bg-white">
-                <div class="px-3 py-2 border-b border-gray-100 flex items-center gap-2">
+                <div class="px-3 py-2 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
                   <div class="w-8 h-8 rounded-full bg-sky-50 flex items-center justify-center text-sky-600 text-lg">
                     📄
                   </div>

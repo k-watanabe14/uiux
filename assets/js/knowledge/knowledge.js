@@ -10,6 +10,10 @@
   const listBodyEl = document.getElementById("knowledge-list-body");
   const listEmptyEl = document.getElementById("knowledge-list-empty");
 
+  const searchInput   = document.getElementById("knowledge-search");
+  const kindFilterEl  = document.getElementById("knowledge-kind-filter");
+  const updatedFilterEl = document.getElementById("knowledge-updated-filter");
+
   const searchInputEl = document.getElementById("knowledge-search-input");
   const statusFilterEl = document.getElementById("knowledge-status-filter");
 
@@ -59,11 +63,11 @@
 
       tr.className = [
         "cursor-pointer",
-        isActive ? "bg-slate-900 text-white" : "hover:bg-slate-50"
+        isActive ? "bg-slate-600 text-white" : "hover:bg-slate-50"
       ].join(" ");
 
       tr.innerHTML = `
-        <td class="px-3 py-2 align-top">
+        <td class="px-3 py-2 align-top w-[55%]">
           <div class="font-medium text-[12px] ${isActive ? "text-white" : "text-gray-900"}">
             ${item.title}
           </div>
@@ -71,23 +75,25 @@
             ${item.series || ""}
           </div>
         </td>
-        <td class="px-2 py-2 align-top whitespace-nowrap">
+        <td class="px-2 py-2 align-top whitespace-nowrap w-[15%]">
           <span class="text-[11px] ${isActive ? "text-slate-200" : "text-gray-700"}">
             ${item.errorCode || "-"}
           </span>
         </td>
-        <td class="px-2 py-2 align-top whitespace-nowrap">
+        <td class="px-2 py-2 align-top whitespace-nowrap w-[15%]">
           <span class="inline-flex px-2 py-0.5 rounded-full text-[11px] font-medium ${
             item.kind === "FAQ"
               ? (isActive ? "bg-blue-500 text-white" : "bg-blue-50 text-blue-700")
               : item.kind === "手順書"
               ? (isActive ? "bg-emerald-500 text-white" : "bg-emerald-50 text-emerald-700")
+              : item.kind === "トラブルシュート"
+              ? (isActive ? "bg-emerald-500 text-white" : "bg-red-50 text-red-700")
               : (isActive ? "bg-gray-600 text-white" : "bg-gray-100 text-gray-700")
           }">
             ${item.kind || "-"}
           </span>
         </td>
-        <td class="px-2 py-2 align-top whitespace-nowrap">
+        <td class="px-2 py-2 align-top whitespace-nowrap w-[15%]">
           <div class="text-[11px] ${isActive ? "text-slate-200" : "text-gray-600"}">
             ${item.updatedAt || ""}
           </div>
@@ -254,20 +260,41 @@
   function applyFilter() {
     const keyword = (searchInputEl?.value || "").trim().toLowerCase();
     const status = statusFilterEl?.value || "";
+    const kind = kindFilterEl?.value || "";           // 種別
+    const updatedRange = updatedFilterEl?.value || ""; // "all" | "7" | "30" | "90" など想定
+
+    const now = new Date();
 
     filteredItems = DATA.filter((item) => {
+      // 1) ステータス
       if (status && item.status !== status) return false;
 
+      // 2) 種別（完全一致）
+      if (kind && item.kind !== kind) return false;
+
+      // 3) 最終更新（相対日数）
+      if (updatedRange && updatedRange !== "all" && item.updatedAt) {
+        const days = parseInt(updatedRange, 10);
+        if (!Number.isNaN(days)) {
+          const itemDate = new Date(item.updatedAt);
+          const diffMs = now - itemDate;
+          const diffDays = diffMs / (1000 * 60 * 60 * 24);
+          if (diffDays > days) return false;
+        }
+      }
+
+      // 4) キーワード（タイトル／エラーコード／シリーズ／タグ／サブタイトル）
       if (keyword) {
         const haystack = [
-          item.title,
-          item.errorCode,
-          item.series,
+          item.title || "",
+          item.errorCode || "",
+          item.series || "",
           (item.tags || []).join(" "),
-          item.subtitle
+          item.subtitle || ""
         ]
           .join(" ")
           .toLowerCase();
+
         if (!haystack.includes(keyword)) return false;
       }
 
@@ -281,6 +308,7 @@
 
     renderList();
   }
+
 
   // =========================
   // 初期化
@@ -299,6 +327,17 @@
     }
     if (statusFilterEl) {
       statusFilterEl.addEventListener("change", () => {
+        applyFilter();
+      });
+    }
+    // ▼ ここを追加
+    if (kindFilterEl) {
+      kindFilterEl.addEventListener("change", () => {
+        applyFilter();
+      });
+    }
+    if (updatedFilterEl) {
+      updatedFilterEl.addEventListener("change", () => {
         applyFilter();
       });
     }
